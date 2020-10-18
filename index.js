@@ -28,8 +28,8 @@ hbs.registerPartials(partialsPath)
 // of files in this folder as if they were in main folder
 app.use(express.static(publicDirectoryPath))
 
-const signs2 = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻaąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż0123456789".split("");
-const signs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const signs = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻaąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż0123456789".split("");
+// const signs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 app.get("/", async(req, res) => {
   res.render('index');
