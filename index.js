@@ -161,7 +161,7 @@ let removeDuplicateCharacters = (string) => {
 
 let checkIfValid = (str, res, data, signsToCheck) => {
   signsToCheck = signsToCheck || signs;
-  if(str == null || str.split("").filter(character => !isValid(character, signsToCheck)).length > 0){
+  if(str == null || str == "" || str.split("").filter(character => !isValid(character, signsToCheck)).length > 0){
       res.render('result', data);
       return false;
   } else {
