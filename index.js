@@ -28,7 +28,8 @@ hbs.registerPartials(partialsPath)
 // of files in this folder as if they were in main folder
 app.use(express.static(publicDirectoryPath))
 
-const signs = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻaąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż0123456789".split("");
+const signs2 = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻaąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż0123456789".split("");
+const signs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 app.get("/", async(req, res) => {
   res.render('index');
@@ -36,35 +37,90 @@ app.get("/", async(req, res) => {
 
 
 app.get("/cesar", async(req, res) => {
-  res.render('index', {
+  res.render('cesar', {
     min : 0,
     max : signs.length
   });
 })
 
 app.post("/cesar", async(req, res) => {
-  var inputText = req.body.text;
-  var result;
-  var title = "encoded text:";
-  if(inputText == null || inputText.trim() == "") {
-    title = "Error";
-    result = "Error - Input text empty"
-  } else if(inputText.split("").filter(char => signs.indexOf(char) < 0).length > 0) {
-    title = "Error";
-    result = `Error - found not permitted  character: "${inputText.split("").filter(char => signs.indexOf(char) < 0)[0]}"`
-  } else {
-    var decode = req.body.decode == true;
-    var shift = parseInt(req.body.shift) || 0;
-    result = inputText.split("").map((character) => signs[wantedIndex(signs, character, decode, shift)]).join("");
-  }
+  var inputText = req.body.text || '';
+  var decode = req.body.decode == true;
+  var shift = parseInt(req.body.shift) || 0;
+  var result = inputText.split("").map((character) => getCesarShift(character, shift, decode)).join("");
   res.render('result', {
-    title,
+    title : `${decode ? 'decoded' : 'encoded'} text:`,
     result,
     route : "cesar"
   });
 })
 
-let wantedIndex = (signs, character, decode, shift) => {
+
+app.get("/vigener", async(req, res) => {
+  res.render('vigener', {
+    min : 0,
+    max : signs.length
+  });
+})
+
+app.post("/vigener", async(req, res) => {
+  var inputText = req.body.text || '';
+  var decode = req.body.decode == true;
+  if(checkIfValid(req.body.key, res, {
+    title : `Error:`,
+    result: "invalid key",
+    route : "vigener"
+  })) {
+    var key = decode ? reverse(req.body.key) : req.body.key;
+    var result = encodeVigener(inputText, key);
+    res.render('result', {
+      title : `${decode ? 'decoded' : 'encoded'} text:`,
+      result,
+      route : "vigener"
+    });
+  }
+})
+
+let checkIfValid = (str, res, data) => {
+  console.log(str);
+  console.log(str.split("").filter(character => signs.indexOf(character)  < 0).length > 0);
+  if(str == null || str.split("").filter(character => signs.indexOf(character) < 0).length > 0){
+      res.render('result', data);
+      return false;
+  } else {
+    return true;
+  }
+}
+
+let reverse = (key) => {
+  return key.split("").map(character => signs[(signs.length - signs.indexOf(character))%signs.length]).join("");
+}
+
+let encodeVigener = (inputText, key) => {
+  let result = "";
+  let ommited = 0;
+  inputText.split("").forEach((character, index) => {
+    if(signs.indexOf(character) >= 0) {
+      let shift = signs.indexOf(key[(index - ommited)%key.length]);
+      result += getCesarShift(character, shift, false);
+    } else {
+      ommited += 1;
+      result += character;
+    }
+  });
+  console.log(result);
+  return result;
+}
+
+let decodeVigener = (inputText, key) => {
+
+}
+
+let getCesarShift = (character, shift, decode) => {
+  return signs.indexOf(character) < 0 ? character : signs[wantedIndex(character, decode, shift)]
+}
+
+let wantedIndex = (character, decode, shift) => {
   return (signs.indexOf(character) + (decode ? (-shift) : shift))%signs.length;
 }
 
