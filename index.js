@@ -30,6 +30,7 @@ app.use(express.static(publicDirectoryPath))
 
 const signs = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻaąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż0123456789".split("");
 // const signs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const extendedSigns = (signs.join("") + " ").split("");
 
 app.get("/", async(req, res) => {
   res.render('index');
@@ -54,7 +55,6 @@ app.post("/cesar", async(req, res) => {
     route : "cesar"
   });
 })
-
 
 app.get("/vigener", async(req, res) => {
   res.render('vigener', {
@@ -81,15 +81,96 @@ app.post("/vigener", async(req, res) => {
   }
 })
 
-let checkIfValid = (str, res, data) => {
-  console.log(str);
-  console.log(str.split("").filter(character => signs.indexOf(character)  < 0).length > 0);
-  if(str == null || str.split("").filter(character => signs.indexOf(character) < 0).length > 0){
+app.get("/playFair", async(req, res) => {
+  res.render('playFair', {
+    min : 0,
+    max : signs.length
+  });
+})
+
+app.post("/playFair", async(req, res) => {
+  var inputText = req.body.text || '';
+  var decode = req.body.decode == true;
+  if(checkIfValid(req.body.key, res, {
+    title : `Error:`,
+    result: "invalid key",
+    route : "playFair"
+  }, extendedSigns)) {
+    var result = encodePlayFair(inputText, req.body.key, decode);
+    res.render('result', {
+      title : `${decode ? 'decoded' : 'encoded'} text:`,
+      result,
+      route : "playFair"
+    });
+  }
+})
+
+let removeNotValidChars = (string, validChars) => {
+  return string.split("").filter(character => validChars.indexOf(character) >=0 ).join("");
+}
+
+let encodePlayFair = (originalText, key, decode) => {
+  let shift = decode ? -1 : 1;
+  let pfSigns = removeDuplicateCharacters(key + extendedSigns.join(""));
+  let playFairSigns = {};
+  let playFairSignsTable = {};
+  let pfShift = 9;
+  let result = "";
+  pfSigns.split("").forEach((character, index) => {
+    let row = Math.floor(index/pfShift);
+    let column = index%pfShift;
+    playFairSigns[character] = {
+        row,
+        column
+    };
+    playFairSignsTable[row] = playFairSignsTable[row] || [];
+    playFairSignsTable[row][column] = character;
+  });
+  let validStr = removeNotValidChars(originalText, extendedSigns);
+  validStr = (validStr.length%2 == 0) ? validStr : (validStr + ' ');
+  validStr.match(/.{1,2}/g).forEach(charactersData => {
+    let chr1 = playFairSigns[charactersData[0]];
+    let chr2 = playFairSigns[charactersData[1]];
+    if(chr1.column == chr2.column) {
+      result += playFairSignsTable[(pfShift + chr1.row + shift)%pfShift][chr1.column]
+      result += playFairSignsTable[(pfShift + chr2.row + shift)%pfShift][chr2.column]
+    } else if (chr1.row == chr2.row) {
+      result += playFairSignsTable[chr1.row][(pfShift + chr1.column + shift)%pfShift]
+      result += playFairSignsTable[chr2.row][(pfShift + chr2.column + shift)%pfShift]
+    } else {
+      result += playFairSignsTable[chr2.row][chr1.column];
+      result += playFairSignsTable[chr1.row][chr2.column];
+    }
+  });
+  originalText.split("").forEach((character, index) => {
+    if(!isValid(character, pfSigns)) {
+      result = result.slice(0, index) + character + result.slice(index);
+    }
+  })
+  return result;
+}
+
+let removeDuplicateCharacters = (string) => {
+  return string
+    .split('')
+    .filter(function(item, pos, self) {
+      return self.indexOf(item) == pos;
+    })
+    .join('');
+}
+
+let checkIfValid = (str, res, data, signsToCheck) => {
+  signsToCheck = signsToCheck || signs;
+  if(str == null || str.split("").filter(character => !isValid(character, signsToCheck)).length > 0){
       res.render('result', data);
       return false;
   } else {
     return true;
   }
+}
+
+let isValid = (character, signsToCheck) => {
+  return signsToCheck.indexOf(character) >= 0;
 }
 
 let reverse = (key) => {
@@ -108,7 +189,6 @@ let encodeVigener = (inputText, key) => {
       result += character;
     }
   });
-  console.log(result);
   return result;
 }
 
