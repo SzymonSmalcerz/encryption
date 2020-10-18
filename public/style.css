@@ -1,0 +1,108 @@
+html, body {
+  .border-radius(0) !important;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
+
+li {
+    list-style-type: none;
+}
+
+ul {
+  padding : 0;
+}
+
+.container {
+  display: block;
+  max-width: 80%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+#field {
+    margin-bottom:20px;
+}
+
+.input {
+  width: 90%;
+  float : left;
+}
+
+#extract {
+  clear : both;
+}
+
+.myContainer {
+  margin-top: 100px;
+  text-align: center;
+}
+
+.container {
+  display: inline-block;
+  max-width: 50%;
+}
+
+#extractContainer {
+  display : none;
+}
+
+#transformContainer {
+  display : none;
+}
+
+#loadContainer {
+  display : none;
+}
+
+#successMessage {
+  background-color: rgba(0,200,0,150);
+  display: none;
+}
+
+#errorMessage {
+  background-color: rgba(200,0,0,150);
+}
+
+.partial {
+  width: 100%;
+  height: 40px;
+  padding: 10px;
+  font-size: 20px;
+  margin: 0;
+  background-color: rgba(150,150,150,0.2);
+  display: table;
+  position:absolute;
+}
+
+#footer {
+  bottom: 0;
+}
+
+#header {
+  top: 0;
+}
+
+.textWrapper {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.message {
+  cursor: pointer;
+  height: 100px;
+  width: 100%;
+  margin: 20px 0 20px 0;
+  text-align: center;
+  font-size: 30px;
+  display: none;
+}
+
+#movie {
+  font-size: 15px;
+}
