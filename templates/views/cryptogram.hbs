@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Ochrona danych - vigener</title>
+      {{>jsAndCss}}
+  </head>
+  <body>
+    <div class="myContainer">
+      {{>header}}
+      <form action="/cryptogram" method="post">
+        <input type="hidden" name="decode" value='1'><br><br>
+        <label for="fname">Known mappins in format "{letter}{mapped_letter},{letter_2}{mapped_letter_2}..." ex "ab,bh,ck":</label>
+        <input type="textarea" name="knownLetters"><br><br>
+        <br><br>
+        <label for="fname">Text to decode:</label>
+        <input type="textarea" name="text"><br><br>
+        <input type="submit" value="Decode">
+      </form>
+      {{>footer}}
+    </div>
+    <script src="/main.js"></script>
+  </body>
+</html>

@@ -7,12 +7,26 @@ html, body {
   width: 100%;
 }
 
+body {
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
 li {
     list-style-type: none;
 }
 
 ul {
   padding : 0;
+}
+
+.jsonContainer {
+  display: block;
+  max-width: 40%;
+  margin-left: 30%;
+  margin-right: 30%;
+  text-align: left;
 }
 
 .container {
@@ -78,7 +92,9 @@ ul {
 }
 
 #footer {
-  bottom: 0;
+  grid-row-start: 2;
+  grid-row-end: 3;
+  display: none;
 }
 
 #header {

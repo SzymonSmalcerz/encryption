@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Ochrona danych</title>
+      {{>jsAndCss}}
+  </head>
+  <body>
+    <div class="myContainer">
+      {{>header}}
+      <div id="result">
+        <h1>Sorted characters from text based on frequency:</h1>
+        <h3>{{sortedArray}}</h3>
+        <h1 style="color:red;">Polish characters based on frequency:</h1>
+        <h3 style="color:red;">{{polishSigns}}</h3>
+        <h1>Prepositions and conjuction letters from text:</h1>
+        <h3>{{singleLetterWords}}</h3>
+        <h1 style="color:red;">Polish prepositions and conjuction letters:</h1>
+        <h3 style="color:red;">{{polishSingleLetters}}</h3>
+        <div class = "jsonContainer">
+          <pre id="json">{{knownMappingsWithProp}}</pre>
+        </div>
+
+        <h1>{{title}}</h1>
+        <div class="container">
+          {{result}}
+        </div>
+      </div>
+      <br>
+      <br>
+      <form action="/{{route}}">
+        <input type="submit" value="Go back" />
+      </form>
+    </div>
+    <script src="/main.js"></script>
+  </body>
+  {{>footer}}
+</html>
