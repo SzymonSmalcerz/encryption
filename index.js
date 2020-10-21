@@ -4,8 +4,8 @@ const hbs = require('hbs');
 const path = require('path');
 const base = require.resolve('dictionary-pl');
 const fs          = require('fs');
-const affix       = fs.readFileSync(base.split("\\index.js").join("") + '\\index.aff');
-const dictionary  = fs.readFileSync(base.split("\\index.js").join("") + '\\index.dic');
+const affix       = fs.readFileSync(base.split("index.js").join("") + 'index.aff');
+const dictionary  = fs.readFileSync(base.split("index.js").join("") + 'index.dic');
 const { Nodehun }          = require('nodehun');
 const nodehun     = new Nodehun(affix, dictionary)
 // initialize express variable
