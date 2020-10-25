@@ -384,22 +384,22 @@ let recursiveSearch = async (arrayOfProbableLetters, knownMappings, word, origin
 }
 
 let fetchProbableLetters = (index, filteredPolishSigns) => {
-  let minIndex = index - 5;
-  let maxIndex = index + 5;
+  let minIndex = index - 4;
+  let maxIndex = index + 4;
   while(maxIndex > filteredPolishSigns.length) {
     maxIndex -= 1;
     minIndex -= 1;
   }
   if(minIndex <0){
     minIndex = 0;
-    maxIndex = 10;
+    maxIndex = 8;
   }
   return filteredPolishSigns.map((char, i) => {
     return {
       index : i,
       char
     }
-  }).sort((a,b) => Math.abs(index-a.index) > Math.abs(index-b.index) ? 1 : -1).slice(0, 11).map(a => a.char);
+  }).sort((a,b) => Math.abs(index-a.index) > Math.abs(index-b.index) ? 1 : -1).slice(0, 9).map(a => a.char);
 }
 
 let capitalizeFirstLetter = (string) => {
