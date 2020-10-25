@@ -57,7 +57,7 @@ app.get("/cesar", async(req, res) => {
 app.post("/cesar", async(req, res) => {
   var inputText = req.body.text || '';
   var decode = req.body.decode == true;
-  var withoutNumbers = req.body.withoutNumbers == true;
+  var withoutNumbers = req.body.withoutNumbers || false;
   var shift = parseInt(req.body.shift) || 0;
   var result = inputText.split("").map((character) => getCesarShift(character, shift, decode, withoutNumbers)).join("");
   res.render('result', {
