@@ -12,6 +12,8 @@
         <input type="textarea" name="text"><br><br>
         <label for="lname">Shift (number between {{min}} - {{max}}):</label>
         <input type="number" name="shift" min={{min}} max={{max}}><br><br>
+        <label for="lname">Without numbers:</label>
+        <input type="checkbox" name="withoutNumbers"><br><br>
         <input type="submit" value="Encode">
       </form>
       <form action="/cesar" method="post">

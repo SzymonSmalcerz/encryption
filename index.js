@@ -32,6 +32,7 @@ hbs.registerPartials(partialsPath)
 app.use(express.static(publicDirectoryPath))
 
 const signs = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻaąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż0123456789".split("");
+const signsWithoutNumbers = "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŹŻaąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż".split("");
 // const signs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const extendedSigns = (signs.join("") + " ").split("");
 const polishSigns = "aioeznrwstcykdpmujlłbgęhąóżśćfńqźvx".split("");
@@ -56,8 +57,9 @@ app.get("/cesar", async(req, res) => {
 app.post("/cesar", async(req, res) => {
   var inputText = req.body.text || '';
   var decode = req.body.decode == true;
+  var withoutNumbers = req.body.withoutNumbers == true;
   var shift = parseInt(req.body.shift) || 0;
-  var result = inputText.split("").map((character) => getCesarShift(character, shift, decode)).join("");
+  var result = inputText.split("").map((character) => getCesarShift(character, shift, decode, withoutNumbers)).join("");
   res.render('result', {
     title : `${decode ? 'decoded' : 'encoded'} text:`,
     result,
@@ -254,7 +256,7 @@ let saltText = (text, key, random) => {
     })
     checkSum = Math.abs(checkSum%(extendedSigns.length - 20)) + 20;
   }
-  let hashedKey = key.split("").map((character) => getCesarShift(character, checkSum, false)).join("");
+  let hashedKey = key.split("").map((character) => getCesarShift(character, checkSum, false, false)).join("");
   return text.split("").map((char, index) => {
     return char + hashedKey[index%hashedKey.length];
   }).join("");
@@ -482,7 +484,7 @@ let encodeVigener = (inputText, key) => {
   inputText.split("").forEach((character, index) => {
     if(signs.indexOf(character) >= 0) {
       let shift = signs.indexOf(key[(index - ommited)%key.length]);
-      result += getCesarShift(character, shift, false);
+      result += getCesarShift(character, shift, false, false);
     } else {
       ommited += 1;
       result += character;
@@ -491,12 +493,20 @@ let encodeVigener = (inputText, key) => {
   return result;
 }
 
-let getCesarShift = (character, shift, decode) => {
-  return signs.indexOf(character) < 0 ? character : signs[wantedIndex(character, decode, shift)]
+let getCesarShift = (character, shift, decode, withoutNumbers) => {
+  if(withoutNumbers) {
+    return signsWithoutNumbers.indexOf(character) < 0 ? character : signsWithoutNumbers[wantedIndex(character, decode, shift,withoutNumbers)]
+  } else {
+    return signs.indexOf(character) < 0 ? character : signs[wantedIndex(character, decode, shift, false)]
+  }
 }
 
-let wantedIndex = (character, decode, shift) => {
-  return (signs.indexOf(character) + (decode ? (-shift) : shift))%signs.length;
+let wantedIndex = (character, decode, shift, withoutNumbers) => {
+  if(withoutNumbers) {
+    return (signsWithoutNumbers.indexOf(character) + (decode ? (-shift) : shift))%signsWithoutNumbers.length;
+  } else {
+    return (signs.indexOf(character) + (decode ? (-shift) : shift))%signs.length;
+  }
 }
 
 // all other routes - return 404
