@@ -115,6 +115,32 @@ app.post("/playFair", async(req, res) => {
   }
 })
 
+app.get("/polyalphabetic", async(req, res) => {
+  res.render('polyalphabetic', {
+    min : 0,
+    max : signs.length
+  });
+})
+
+app.post("/polyalphabetic", async(req, res) => {
+  var inputText = req.body.text || '';
+  var decode = req.body.decode == true;
+  if(checkIfValid(req.body.key, res, {
+    title : `Error:`,
+    result: "invalid key",
+    route : "polyalphabetic"
+  }), extendedSigns) {
+    var key = req.body.key;
+    inputText = decode ? inputText : saltText(inputText, key, req.body.random);
+    var result = encodePlayFair(inputText, key, decode);
+    result = decode ? desaltText(result) : result;
+    res.render('result', {
+      title : `${decode ? 'decoded' : 'encoded'} text:`,
+      result,
+      route : "polyalphabetic"
+    });
+  }
+})
 
 app.get("/cryptogram", async(req, res) => {
   res.render('cryptogram', {
@@ -216,6 +242,26 @@ app.post("/cryptogram", async(req, res) => {
     });
   }
 });
+
+let desaltText = (text) => {
+  return text.split("").filter((char, index) => index%2==0).join("");
+}
+
+let saltText = (text, key, random) => {
+  let checkSum = 0;
+  if(random) {
+    checkSum = 20 + Math.floor((extendedSigns.length - 20) * Math.random());
+  } else {
+    text.split("").forEach(char => {
+      checkSum += extendedSigns.indexOf(char);
+    })
+    checkSum = Math.abs(checkSum%(extendedSigns.length - 20)) + 20;
+  }
+  let hashedKey = key.split("").map((character) => getCesarShift(character, checkSum, false)).join("");
+  return text.split("").map((char, index) => {
+    return char + hashedKey[index%hashedKey.length];
+  }).join("");
+}
 
 let decodeText = (inputText, knownMappings) => {
   return inputText.split("").map(char => knownMappings[char] != null ? knownMappings[char] : char).join("");

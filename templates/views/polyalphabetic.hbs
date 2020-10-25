@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Ochrona danych - polyalphabetic substitution</title>
+      {{>jsAndCss}}
+  </head>
+  <body>
+    <div class="myContainer">
+      {{>header}}
+      <form action="/polyalphabetic" method="post">
+        <label for="fname">Text to encode:</label>
+        <input type="textarea" name="text"><br><br>
+        <label for="lname">Encryption key:</label>
+        <input type="textarea" name="key" min={{min}} max={{max}}><br><br>
+        <label for="lname">Random step:</label>
+        <input type="checkbox" name="random"><br><br>
+        <input type="submit" value="Encode">
+      </form>
+      <form action="/polyalphabetic" method="post">
+        <input type="hidden" name="decode" value='1'><br><br>
+        <label for="fname">Text to decode:</label>
+        <input type="textarea" name="text"><br><br>
+        <label for="lname">Encryption key:</label>
+        <input type="textarea" name="key"><br><br>
+        <input type="submit" value="Decode">
+      </form>
+      {{>footer}}
+    </div>
+    <script src="/main.js"></script>
+  </body>
+</html>
