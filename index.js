@@ -370,7 +370,7 @@ let recursiveSearch = async (arrayOfProbableLetters, knownMappings, word, origin
         knownMappings[originalLetters[index]] = knownMappings[originalLetters[index]] || { letters : {}};
         knownMappings[originalLetters[index]].letters[mappedLetter] = knownMappings[originalLetters[index]].letters[mappedLetter] || 0;
         knownMappings[originalLetters[index]].letters[mappedLetter] += 1;
-        if(knownMappings[originalLetters[index]].letters[mappedLetter] >= 150) {
+        if(knownMappings[originalLetters[index]].letters[mappedLetter] >= 35) {
           knownMappings[originalLetters[index]].mostProbableLetter = mappedLetter;
         }
       });
