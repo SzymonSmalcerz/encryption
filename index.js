@@ -186,7 +186,7 @@ app.post("/cryptogram", async(req, res) => {
     if(singleLetterWords.length != 6 ) {
       res.render('result', {
         title : `Error:`,
-        result: "Text not possible to decrypt",
+        result: "Text not possible to decrypt - required 6 prepositions and conjuction letters (got " + singleLetterWords.length +" : " + singleLetterWords),
         route : "cryptogram"
       });
       return;
