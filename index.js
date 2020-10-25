@@ -505,7 +505,7 @@ let wantedIndex = (character, decode, shift, withoutNumbers) => {
   if(withoutNumbers) {
     return (signsWithoutNumbers.indexOf(character) + (decode ? (-shift) : shift))%signsWithoutNumbers.length;
   } else {
-    return (signs.length + (signs.indexOf(character) + (decode ? (-shift) : shift))%signs.length);
+    return (signs.length + (signs.indexOf(character) + (decode ? (-shift) : shift)))%signs.length;
   }
 }
 
