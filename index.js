@@ -40,7 +40,6 @@ polishSigns.forEach((character, index) => {
   polishSignsObj[character] = index;
 });
 const singleChars = "awiozu";
-polishSignsWithoutSingleLetters = "enrstcykdpmjlłbgęhąóżśćfńqźvx".split("");
 
 app.get("/", async(req, res) => {
   res.render('index');
@@ -177,9 +176,6 @@ app.post("/cryptogram", async(req, res) => {
       }
     }
     arrayWithCounts.sort((a,b) => a.count > b.count ? -1 : 1);
-    let computedWords = [];
-    let n = 3;
-    let done = false;
     let knownMappings = {};
     let probableMappings = {};
     var singleLetterWords = removeDuplicateCharacters(words.filter(word => word.length == 1).join(""));
@@ -195,20 +191,21 @@ app.post("/cryptogram", async(req, res) => {
       });
       return;
     }
-    // let filteredPolishSigns = singleLetterWords.length == singleChars.length ? polishSignsWithoutSingleLetters : polishSigns;
+
     let sortedArray = removeDuplicateCharacters(arrayWithCounts.map(obj => obj.letter).join("") + polishSigns.join("")).split("");
     sortedArray.forEach((character, index) => {
       probableMappings[character] = fetchProbableLetters(index, polishSigns);
     });
     console.log(sortedArray);
     probableMappings = adjustMapping(probableMappings, singleLetterWords, sortedArray, req.body.knownLetters);
-    // res.json("XDD");
-    // return;
+
+    let n = 3;
+    let computedWords = [];
     while(n < 7) {
       computedWords = computedWords.concat(words.filter(word => word.length == n));
-      while(computedWords.length >= 5) {
-        done = await validateWords(computedWords, probableMappings, knownMappings);
-        computedWords = computedWords.slice(5);
+      if(computedWords.length >= 5) {
+        await validateWords(computedWords, probableMappings, knownMappings);
+        computedWords = [];
       }
       n += 1;
     }
@@ -352,7 +349,7 @@ let adjustMapping = (probableMappings, singleLetterWords, sortedArray, knownLett
 }
 
 let validateWords = async (computedWords, probableMappings, knownMappings) => {
-  for(let i=0;i<5;i++) {
+  for(let i=0;i<computedWords.length;i++) {
     let word = computedWords[i];
     let arrayOfProbableLetters = word.split("").map(letter => {
       return (knownMappings[letter] != null && knownMappings[letter].mostProbableLetter != null) ? [knownMappings[letter].mostProbableLetter] : probableMappings[letter]
@@ -403,7 +400,7 @@ let fetchProbableLetters = (index, filteredPolishSigns) => {
   }).sort((a,b) => Math.abs(index-a.index) > Math.abs(index-b.index) ? 1 : -1).slice(0, 11).map(a => a.char);
 }
 
-function capitalizeFirstLetter(string) {
+let capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -492,10 +489,6 @@ let encodeVigener = (inputText, key) => {
     }
   });
   return result;
-}
-
-let decodeVigener = (inputText, key) => {
-
 }
 
 let getCesarShift = (character, shift, decode) => {
